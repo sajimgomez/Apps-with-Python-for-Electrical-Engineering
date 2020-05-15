@@ -11,16 +11,27 @@ Root.title('Grounding Grid Design With IEEE-std_80')
 
 IconImageApp = tkinter.PhotoImage(file = 'Ifgrid.png')
 
+ImageApp = tkinter.PhotoImage(file = 'Step-and-touch-voltage.png')
+
 Root.iconphoto(False, IconImageApp)
 
 Frame1 = tkinter.Frame(Root)
 
 Frame1.pack()
 
+ImageAppCont1 = tkinter.Label(Frame1, image = ImageApp).grid(row = 2, column = 0, columnspan = 2)
 
-ExistingData = tkinter.LabelFrame(Frame1, text = 'Existing network data')
 
-ExistingData.grid(row = 0, column = 0)
+TypeOfConductors = ['Cooper, annealed soft-drawn 100% conductivity', 'Cooper, commercial hard-drawn 97% conductivity', 'Cooper-clad steel wire 40% conductivity', 'Cooper-clad steel wire 30% conductivity', 'Cooper-clad steel rod 20% conductivity', 'Aluminum, EC grade 61% conductivity', 'Aluminum, 5005 alloy 53.5% conductivity', 'Aluminum, 6201 alloy 52.5% conductivity', 'Aluminum-clad steel wire 20.3% conductivity', 'Steel, 1020 10.8% conductivity', 'Stainless-clad steel rod 9.8% conductivity', 'Zinc-coated steel rod 8.6% conductivity', 'Stainless steel, 304 2.4% conductivity']
+
+CondProperties = ['αr at 20°C (1/°C)', 'Ko at 0°C (°C)', 'Fusing Temperature Tm', 'ρr at 20°C (μΩcm)', 'TCAP Thermal capacity (J/cm3°C)', 'Kf']
+
+CondDataProperties = [[0.00393, 234, 1083, 1.72, 3.42, 7], [0.00381, 242, 1084, 1.78, 3.42, 7.06], [0.00378, 245, 1084, 4.4, 3.85, 10.45], [0.00378, 245, 1084, 5.86, 3.85, 12.06], [0.00378, 245, 1084, 8.62, 3.85, 14.64], [0.00403, 228, 657, 2.86, 2.56, 12.12], [0.00353, 263, 652, 3.22, 2.6, 12.41], [0.00347, 268, 654, 3.28, 2.6, 12.47], [0.0036, 258, 657, 8.48, 3.58, 17.2], [0.00316, 605, 1510, 15.9, 3.28, 15.95], [0.0016, 605, 1400, 17.5, 4.44, 14.72], [0.0032, 293, 419, 20.1, 3.93, 28.96], [0.0013, 749, 1400, 72, 4.03, 30.05]]
+
+
+ExistingData = tkinter.LabelFrame(Frame1, text = 'Existing network data', padx = 20, pady = 20)
+
+ExistingData.grid(row = 0, column = 0, padx = 5, pady = 0)
 
 MaxFaultClTime = tkinter.Label(ExistingData, text = 'Maximum Fault Clearance Time in seconds: ').grid(row = 0, column = 0)
 
@@ -55,9 +66,9 @@ fnomSys = tkinter.Label(ExistingData, text = 'Nominal frecuence of the System (5
 f_nom = tkinter.Entry(ExistingData).grid(row = 7, column = 1)
 
 
-DesignData = tkinter.LabelFrame(Frame1, text = 'Design Data')
+DesignData = tkinter.LabelFrame(Frame1, text = 'Design Data', padx = 20, pady = 20)
 
-DesignData.grid(row = 0, column = 1)
+DesignData.grid(row = 0, column = 1, padx = 5, pady = 10)
 
 ResOfCrushedRock = tkinter.Label(DesignData, text = 'Resistivity of Crushed Rock in Ohm-meter: ').grid(row = 0, column = 0)
 
@@ -93,13 +104,13 @@ L_O_R = tkinter.Entry(DesignData).grid(row = 7, column = 1)
 
 CondMat = tkinter.Label(DesignData, text = 'Mesh Conductor Material: ').grid(row = 8, column = 0)
 
-MeCondMat = ttk.Combobox(DesignData, values = ['vfdjlvn', 'fnljfn', 'hsvdsld']).grid(row = 8, column = 1)
+MeCondMat = ttk.Combobox(DesignData, values = TypeOfConductors).grid(row = 8, column = 1, pady = 5)
 
 
 
-Results = tkinter.LabelFrame(Frame1, text = 'Results')
+Results = tkinter.LabelFrame(Frame1, text = 'Results', padx = 20, pady = 20)
 
-Results.grid(row = 1, column = 0)
+Results.grid(row = 1, column = 0, pady = 0)
 
 ConSize = tkinter.Label(Results, text = 'Minimum Conductor Size in KCM (Kilo Circular Mil): ').grid(row = 0, column = 0)
 
@@ -132,6 +143,9 @@ M_M_V = ttk.Entry(Results, state = 'readonly').grid(row = 6, column = 1)
 MaxStepVol = tkinter.Label(Results, text = 'Maximum Step voltage "Es" in volts: ').grid(row = 7, column = 0)
 
 M_S_V = ttk.Entry(Results, state = 'readonly').grid(row = 7, column = 1)
+
+
+Calc = tkinter.Button(Frame1, text = 'Calculate').grid(row = 1, column = 1)
 
 
 Root.mainloop()
