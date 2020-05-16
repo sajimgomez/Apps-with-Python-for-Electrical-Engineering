@@ -19,7 +19,33 @@ Frame1 = tkinter.Frame(Root)
 
 Frame1.pack()
 
-ImageAppCont1 = tkinter.Label(Frame1, image = ImageApp).grid(row = 2, column = 0, columnspan = 2)
+Frame2 = tkinter.Frame(Root, bg = 'blue')
+
+ImageAppCont1 = tkinter.Label(Frame1, image = ImageApp).grid(row = 2, column = 0)
+
+MenuBar = tkinter.Menu(Root)
+
+Root.config(menu = MenuBar)
+
+GroundingSysConfig = tkinter.Menu(MenuBar)
+
+MenuBar.add_cascade(label = 'Grounding grid Configuration', menu = GroundingSysConfig)
+
+def ShowDepthElec() :
+
+    Frame1.destroy()
+
+    Frame2.pack(fill = 'both', expand = 1)
+
+GroundingSysConfig.add_command(label = 'Depth Electrode', command = ShowDepthElec)
+
+def ShowIEEE80() :
+
+    Frame2.destroy()
+
+    Frame1.pack()
+
+GroundingSysConfig.add_command(label = 'Rectangular or L-shaped mesh', command = ShowIEEE80)
 
 
 TypeOfConductors = ['Cooper, annealed soft-drawn 100% conductivity', 'Cooper, commercial hard-drawn 97% conductivity', 'Cooper-clad steel wire 40% conductivity', 'Cooper-clad steel wire 30% conductivity', 'Cooper-clad steel rod 20% conductivity', 'Aluminum, EC grade 61% conductivity', 'Aluminum, 5005 alloy 53.5% conductivity', 'Aluminum, 6201 alloy 52.5% conductivity', 'Aluminum-clad steel wire 20.3% conductivity', 'Steel, 1020 10.8% conductivity', 'Stainless-clad steel rod 9.8% conductivity', 'Zinc-coated steel rod 8.6% conductivity', 'Stainless steel, 304 2.4% conductivity']
@@ -154,7 +180,7 @@ ConSize = tkinter.Label(Results, text = 'Minimum Conductor Size in KCM (Kilo Cir
 
 CS = tkinter.StringVar()
 
-C_size = ttk.Entry(Results, state = 'readonly', textvariable = CS).grid(row = 0, column = 1)
+C_size = ttk.Entry(Results, state = 'readonly', textvariable = CS).grid(row = 0, column = 1)        
 
 MeshResis = tkinter.Label(Results, text = 'Mesh Resistance in Ohm: ').grid(row = 2, column = 0)
 
@@ -193,10 +219,22 @@ MSV = tkinter.StringVar()
 M_S_V = ttk.Entry(Results, state = 'readonly', textvariable = MSV).grid(row = 7, column = 1)
 
 
+Vdic = tkinter.StringVar()
+
+Verdict = ttk.Entry(Frame1, state = 'readonly', textvariable = Vdic, width = 70).grid(row = 2, column = 1)
+
 # IEEE80 functionality *************************************************************************************
 
 
 def IEEE80() :
+
+    if float(NOR.get()) == 0 :
+
+        LOR.set('0')
+
+        L_O_R = tkinter.Entry(DesignData, textvariable = LOR, state = 'readonly').grid(row = 7, column = 1)
+
+
 
     # Mesh conductor size in KCM (Kilo circular mil)
 
@@ -278,7 +316,7 @@ def IEEE80() :
 
     Kii = 1 / ((2 * n) ** (2 / n))
 
-    Km = (1 / (2 * pi)) * (log(((float(SBPC.get()) ** 2) / (16 * float(MBD.get()) * d_conductor)) + (((float(SBPC.get()) + 2 * float(MBD.get())) ** 2) / (8 * float(SBPC.get()) * d_conductor)) +  - (float(MBD.get()) / (4 * d_conductor))) + (Kii / Kh) * (log(8 / (pi * (2 * n - 1)))))
+    Km = (1 / (2 * pi)) * (log(((float(SBPC.get()) ** 2) / (16 * float(MBD.get()) * d_conductor)) + (((float(SBPC.get()) + 2 * float(MBD.get())) ** 2) / (8 * float(SBPC.get()) * d_conductor)) - (float(MBD.get()) / (4 * d_conductor))) + (Kii / Kh) * (log(8 / (pi * (2 * n - 1)))))
 
     Ki = 0.644 + 0.148 * n
 
@@ -305,8 +343,6 @@ def IEEE80() :
 
     CS.set(A_KCM)
 
-    # CCS.set() commercial conductor size
-
     MR.set(Rg)
 
     GrPoRi.set(GPR)
@@ -318,6 +354,27 @@ def IEEE80() :
     MMV.set(E_mesh)
 
     MSV.set(Es_mesh)
+
+
+    if GPR < Et_50Kg :
+
+        
+        Vdic.set('Design meets standard, GPR < Et_50Kg')
+
+
+    elif E_mesh < Et_50Kg and Es_mesh < Es_50Kg :
+
+
+        Vdic.set('Design meets standard, E_mesh < Et_50kg and Es_mesh < Es_50kg')
+
+
+    else : 
+
+
+        Vdic.set('Modify Design to meet standard')    
+
+
+    L_O_R = tkinter.Entry(DesignData, textvariable = LOR).grid(row = 7, column = 1)   
 
 
 
