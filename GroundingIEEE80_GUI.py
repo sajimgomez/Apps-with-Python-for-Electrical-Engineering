@@ -421,11 +421,11 @@ ImageDepthElec = tkinter.PhotoImage(file = 'Electrode.png')
 
 ImElecCont = tkinter.Label(Frame2, image = ImageDepthElec).grid(row = 0, column = 0)
 
+
+
 UtilityData = tkinter.LabelFrame(Frame2, text = 'Existing Data', padx = 20, pady = 20)
 
 UtilityData.grid(row = 0, column = 1, padx = 0)
-
-
 
 MaxFaultClTime_DE = tkinter.Label(UtilityData, text = 'Maximum Fault Clearance Time in seconds: ').grid(row = 0, column = 0)
 
@@ -511,11 +511,17 @@ LOR_DE = tkinter.StringVar()
 
 L_O_R_DE = tkinter.Entry(DesignData_DE, textvariable = LOR_DE).grid(row = 3, column = 1)
 
-CondMat_DE = tkinter.Label(DesignData_DE, text = 'Grounding Electrode Conductor Material: ').grid(row = 4, column = 0)
+DiaOfRod_DE = tkinter.Label(DesignData_DE, text = 'Diameter of Rod in meters: ').grid(row = 4, column = 0)
+
+DIOR_DE = tkinter.StringVar()
+
+D_I_O_R_DE = tkinter.Entry(DesignData_DE, textvariable = DIOR_DE).grid(row = 4, column = 1)
+
+CondMat_DE = tkinter.Label(DesignData_DE, text = 'Grounding Electrode Conductor Material: ').grid(row = 5, column = 0)
 
 MCM_DE = tkinter.StringVar()
 
-MeCondMat_DE = ttk.Combobox(DesignData_DE, values = TypeOfConductors, textvariable = MCM_DE).grid(row = 4, column = 1, pady = 5)
+MeCondMat_DE = ttk.Combobox(DesignData_DE, values = TypeOfConductors, textvariable = MCM_DE).grid(row = 5, column = 1, pady = 5)
 
 
 
@@ -573,7 +579,94 @@ Verdict_DE = ttk.Entry(Frame2, state = 'readonly', textvariable = Vdic_DE, width
 
 def DEPot() :
 
-    pass
+
+    # Grounding electrode conductor size in KCM (Kilo circular mil)
+
+    Ta_MF = float(XRMFC_DE.get()) / (2 * pi * float(FNOM_DE.get()))
+
+    Ta_MFGPR = float(XRGPR_DE.get()) / (2 * pi * float(FNOM_DE.get()))
+
+
+    def DecrementFactor(Ta, MaximumFaultClearanceTime) :
+
+        Df = (1 + (Ta/MaximumFaultClearanceTime) * (1 - e ** - ((2 * MaximumFaultClearanceTime) / Ta))) ** 0.5
+
+        return Df
+
+
+    I_conductor = DecrementFactor(Ta_MF, float(MFCT_DE.get())) * float(MFC_DE.get())
+
+    TCAP = CondDataProperties[TypeOfConductors.index(MCM_DE.get())][4] 
+
+    alpha_r = CondDataProperties[TypeOfConductors.index(MCM_DE.get())][0] 
+
+    rho_r = CondDataProperties[TypeOfConductors.index(MCM_DE.get())][3] 
+
+    Ko = CondDataProperties[TypeOfConductors.index(MCM_DE.get())][1]
+
+    Tm = CondDataProperties[TypeOfConductors.index(MCM_DE.get())][2] 
+
+    A_KCM = I_conductor * (197.4 / (((TCAP / (float(MFCT_DE.get()) * alpha_r * rho_r)) * (log((Ko + Tm) / (Ko + float(AT_DE.get()))))) ** 0.5))
+
+    if A_KCM < 133.1 :
+
+        A_KCM = 133.1 
+
+
+
+    # Allowable Touch and step tension criteria
+
+    Cs = 1 - ((0.09 * (1 - (float(GR_DE.get()) / float(RCR_DE.get())))) / (2 * float(TCRL_DE.get()) + 0.09)) # corrective factor to compute the effective foot resistance in the presence of a finite thickness of surface material
+
+    Es_50Kg = (1000 + 6 * Cs * float(RCR_DE.get())) * (0.116 / (float(MFCT_DE.get()) ** 0.5)) # Allowable step voltage for a 50 Kg person
+
+    Et_50Kg = (1000 + 1.5 * Cs * float(RCR_DE.get())) * (0.116 / (float(MFCT_DE.get()) ** 0.5)) # Allowable touch voltage for a 50 Kg person
+
+    Rrod = (float(GR_DE.get()) / (2 * pi * float(LOR_DE.get()))) * (log((2 * float(LOR_DE.get())) / float(DIOR_DE.get())) + 0.5 * log((3 * float(LOR_DE.get()) + 4 * float(MBD_DE.get())) / (float(LOR_DE.get()) + 4 * float(MBD_DE.get()))))
+
+    I_Rod = DecrementFactor(Ta_MFGPR, float(MFCT_DE.get())) * float(Sf_DE.get()) * float(MFCGPR_DE.get())
+
+    GPR = I_Rod * Rrod * 1000
+
+    Rf = 3 * float(RCR_DE.get()) * Cs
+
+    I_manTouch = I_Rod * (Rrod / (Rrod + 1000 + 0.5 * Rf))
+
+    Etouch = I_manTouch * 1000 * 1000
+
+
+    CS_DE.set(A_KCM)
+
+    MR_DE.set(Rrod)
+
+    GrPoRi_DE.set(GPR)
+
+    ATV_DE.set(Et_50Kg)
+
+    ASV_DE.set(Es_50Kg)
+
+    MMV_DE.set(Etouch)
+
+    MSV_DE.set(Etouch)
+
+
+    if GPR < Et_50Kg :
+
+        
+        Vdic_DE.set('Design meets standard, GPR < Et_50Kg')
+
+
+    elif Etouch < Et_50Kg and Etouch < Es_50Kg :
+
+
+        Vdic_DE.set('Design meets standard, Etouch < Et_50kg and Etouch < Es_50kg')
+
+
+    else : 
+
+
+        Vdic_DE.set('Modify Design to meet standard')    
+
 
 
 CalButton = tkinter.Button(Frame2, text = 'Calculate', command = DEPot).grid(row = 0, column = 2, padx = 30)
