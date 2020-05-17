@@ -13,13 +13,21 @@ IconImageApp = tkinter.PhotoImage(file = 'Ifgrid.png')
 
 ImageApp = tkinter.PhotoImage(file = 'Step-and-touch-voltage.png')
 
+PresImage = tkinter.PhotoImage(file = 'Presentation.png')
+
 Root.iconphoto(False, IconImageApp)
 
 Frame1 = tkinter.Frame(Root)
 
-Frame1.pack()
+Frame2 = tkinter.Frame(Root)
 
-Frame2 = tkinter.Frame(Root, bg = 'blue')
+PresentationFrame = tkinter.Frame(Root)
+
+PresentationFrame.pack()
+
+PresImageCont = tkinter.Label(PresentationFrame, image = PresImage)
+
+PresImageCont.pack()
 
 ImageAppCont1 = tkinter.Label(Frame1, image = ImageApp).grid(row = 2, column = 0)
 
@@ -31,9 +39,23 @@ GroundingSysConfig = tkinter.Menu(MenuBar)
 
 MenuBar.add_cascade(label = 'Grounding grid Configuration', menu = GroundingSysConfig)
 
+About = tkinter.Menu(MenuBar)
+
+MenuBar.add_cascade(label = 'About', menu = About)
+
+
+def HideFrames() :
+
+    PresentationFrame.pack_forget()
+
+    Frame1.pack_forget()
+
+    Frame2.pack_forget()
+
+
 def ShowDepthElec() :
 
-    Frame1.destroy()
+    HideFrames()
 
     Frame2.pack(fill = 'both', expand = 1)
 
@@ -41,12 +63,22 @@ GroundingSysConfig.add_command(label = 'Depth Electrode', command = ShowDepthEle
 
 def ShowIEEE80() :
 
-    Frame2.destroy()
+    HideFrames()
 
     Frame1.pack()
 
 GroundingSysConfig.add_command(label = 'Rectangular or L-shaped mesh', command = ShowIEEE80)
 
+def ShowAbout() :
+
+    HideFrames()
+
+    PresentationFrame.pack()
+
+About.add_command(label = 'About', command = ShowAbout)
+
+
+# Frame 1 ************************************************************************************************************
 
 TypeOfConductors = ['Cooper, annealed soft-drawn 100% conductivity', 'Cooper, commercial hard-drawn 97% conductivity', 'Cooper-clad steel wire 40% conductivity', 'Cooper-clad steel wire 30% conductivity', 'Cooper-clad steel rod 20% conductivity', 'Aluminum, EC grade 61% conductivity', 'Aluminum, 5005 alloy 53.5% conductivity', 'Aluminum, 6201 alloy 52.5% conductivity', 'Aluminum-clad steel wire 20.3% conductivity', 'Steel, 1020 10.8% conductivity', 'Stainless-clad steel rod 9.8% conductivity', 'Zinc-coated steel rod 8.6% conductivity', 'Stainless steel, 304 2.4% conductivity']
 
@@ -379,6 +411,172 @@ def IEEE80() :
 
 
 Calc = tkinter.Button(Frame1, text = 'Calculate', command = IEEE80).grid(row = 1, column = 1)
+
+
+
+# Frame2 *********************************************************************************************************
+
+
+ImageDepthElec = tkinter.PhotoImage(file = 'Electrode.png')
+
+ImElecCont = tkinter.Label(Frame2, image = ImageDepthElec).grid(row = 0, column = 0)
+
+UtilityData = tkinter.LabelFrame(Frame2, text = 'Existing Data', padx = 20, pady = 20)
+
+UtilityData.grid(row = 0, column = 1, padx = 0)
+
+
+
+MaxFaultClTime_DE = tkinter.Label(UtilityData, text = 'Maximum Fault Clearance Time in seconds: ').grid(row = 0, column = 0)
+
+MFCT_DE = tkinter.StringVar()
+
+MaFaClTime_DE = tkinter.Entry(UtilityData, textvariable = MFCT_DE).grid(row = 0, column = 1)
+
+GroundRes_DE = tkinter.Label(UtilityData, text = 'Ground Resistivity in Ohm-meter: ').grid(row = 1, column = 0)
+
+GR_DE = tkinter.StringVar()
+
+G_R_DE = tkinter.Entry(UtilityData, textvariable = GR_DE).grid(row = 1, column = 1)
+
+AmbTemp_DE = tkinter.Label(UtilityData, text = 'Ambient Temperature in °C: ').grid(row = 2, column = 0)
+
+AT_DE = tkinter.StringVar()
+
+A_T_DE = tkinter.Entry(UtilityData, textvariable = AT_DE).grid(row = 2, column = 1)
+
+MaxFaultCurr_DE = tkinter.Label(UtilityData, text = 'Maximum Fault Current in Kiloamps: ').grid(row = 3, column = 0)
+
+MFC_DE = tkinter.StringVar()
+
+M_F_C_DE = tkinter.Entry(UtilityData, textvariable = MFC_DE).grid(row = 3, column = 1)
+
+MaxFaultCurrGPR_DE = tkinter.Label(UtilityData, text = 'Maximum Fault Current that contributes to the Ground Potential Rise in Kiloamps: ').grid(row = 4, column = 0)
+
+MFCGPR_DE = tkinter.StringVar()
+
+M_F_C_GPR_DE = tkinter.Entry(UtilityData, textvariable = MFCGPR_DE).grid(row = 4, column = 1)
+
+XtoR_ratio_MFC_DE = tkinter.Label(UtilityData, text = 'X (reactance) to R (resistance) ratio for the Maximum Fault Current: ').grid(row = 5, column = 0)
+
+XRMFC_DE = tkinter.StringVar()
+
+X_R_MFC_DE = tkinter.Entry(UtilityData, textvariable = XRMFC_DE).grid(row = 5, column = 1)
+
+XtoR_ratio_GPR_DE = tkinter.Label(UtilityData, text = 'X (reactance) to R (resistance) ratio for the Maximum Fault Current that contributes to the Ground Potential Rise: ').grid(row = 6, column = 0)
+
+XRGPR_DE = tkinter.StringVar()
+
+X_R_GPR_DE = tkinter.Entry(UtilityData, textvariable = XRGPR_DE).grid(row = 6, column = 1)
+
+fnomSys_DE = tkinter.Label(UtilityData, text = 'Nominal frecuence of the System (50Hz or 60Hz) in Hz: ').grid(row = 7, column = 0)
+
+FNOM_DE = tkinter.StringVar()
+
+f_nom_DE = tkinter.Entry(UtilityData, textvariable = FNOM_DE).grid(row = 7, column = 1)
+
+SplitFactor_DE = tkinter.Label(UtilityData, text = 'Insert the Current Division Factor: ').grid(row = 8, column = 0)
+
+Sf_DE = tkinter.StringVar()
+
+SplFact_DE = tkinter.Entry(UtilityData, textvariable = Sf_DE).grid(row = 8, column = 1)
+
+
+
+DesignData_DE = tkinter.LabelFrame(Frame2, text = 'Design Data', padx = 20, pady = 20)
+
+DesignData_DE.grid(row = 1, column = 0, padx = 30, pady = 40)
+
+ResOfCrushedRock_DE = tkinter.Label(DesignData_DE, text = 'Resistivity of Crushed Rock in Ohm-meter: ').grid(row = 0, column = 0)
+
+RCR_DE = tkinter.StringVar()
+
+R_C_R_DE = tkinter.Entry(DesignData_DE, textvariable = RCR_DE).grid(row = 0, column = 1)
+
+ThickOfCrushRockLayer_DE = tkinter.Label(DesignData_DE, text = 'Thickness Of Crushed Rock Layer in meters: ').grid(row = 1, column = 0)
+
+TCRL_DE = tkinter.StringVar()
+
+T_C_R_L_DE = tkinter.Entry(DesignData_DE, textvariable = TCRL_DE).grid(row = 1, column = 1)
+
+MeBurDep_DE = tkinter.Label(DesignData_DE, text = 'Electrode Burial Depth in meters: ').grid(row = 2, column = 0)
+
+MBD_DE = tkinter.StringVar()
+
+M_B_D_DE = tkinter.Entry(DesignData_DE, textvariable = MBD_DE).grid(row = 2, column = 1)
+
+LenOfRod_DE = tkinter.Label(DesignData_DE, text = 'Length of Rod in meters: ').grid(row = 3, column = 0)
+
+LOR_DE = tkinter.StringVar()
+
+L_O_R_DE = tkinter.Entry(DesignData_DE, textvariable = LOR_DE).grid(row = 3, column = 1)
+
+CondMat_DE = tkinter.Label(DesignData_DE, text = 'Grounding Electrode Conductor Material: ').grid(row = 4, column = 0)
+
+MCM_DE = tkinter.StringVar()
+
+MeCondMat_DE = ttk.Combobox(DesignData_DE, values = TypeOfConductors, textvariable = MCM_DE).grid(row = 4, column = 1, pady = 5)
+
+
+
+Results_DE = tkinter.LabelFrame(Frame2, text = 'Results', padx = 30, pady = 20)
+
+Results_DE.grid(row = 1, column = 1, padx = 30)
+
+ConSize_DE = tkinter.Label(Results_DE, text = 'Minimum Conductor Size in KCM (Kilo Circular Mil): ').grid(row = 0, column = 0)
+
+CS_DE = tkinter.StringVar()
+
+C_size_DE = ttk.Entry(Results_DE, state = 'readonly', textvariable = CS_DE).grid(row = 0, column = 1)        
+
+MeshResis_DE = tkinter.Label(Results_DE, text = 'Electrode System Resistance in Ohm: ').grid(row = 2, column = 0)
+
+MR_DE = tkinter.StringVar()
+
+M_R_DE = ttk.Entry(Results_DE, state = 'readonly', textvariable = MR_DE).grid(row = 2, column = 1)
+
+GrPotRise_DE = tkinter.Label(Results_DE, text = 'Ground Potential Rise (GPR) in volts: ').grid(row = 3, column = 0)
+
+GrPoRi_DE = tkinter.StringVar()
+
+G_P_R_DE = ttk.Entry(Results_DE, state = 'readonly', textvariable = GrPoRi_DE).grid(row = 3, column = 1)
+
+AlloTouVol_DE = tkinter.Label(Results_DE, text = 'Allowable Touch voltage for 50Kg person in volts: ').grid(row = 4, column = 0)
+
+ATV_DE = tkinter.StringVar()
+
+A_T_V_DE = ttk.Entry(Results_DE, state = 'readonly', textvariable = ATV_DE).grid(row = 4, column = 1)
+
+AlloStepVol_DE = tkinter.Label(Results_DE, text = 'Allowable Step voltage for 50Kg person in volts: ').grid(row = 5, column = 0)
+
+ASV_DE = tkinter.StringVar()
+
+A_S_V_DE = ttk.Entry(Results_DE, state = 'readonly', textvariable = ASV_DE).grid(row = 5, column = 1)
+
+MaxMesVol_DE = tkinter.Label(Results_DE, text = 'Maximum Electrode voltage "Em" in volts: ').grid(row = 6, column = 0)
+
+MMV_DE = tkinter.StringVar()
+
+M_M_V_DE = ttk.Entry(Results_DE, state = 'readonly', textvariable = MMV_DE).grid(row = 6, column = 1)
+
+MaxStepVol_DE = tkinter.Label(Results_DE, text = 'Maximum Step voltage "Es" in volts: ').grid(row = 7, column = 0)
+
+MSV_DE = tkinter.StringVar()
+
+M_S_V_DE = ttk.Entry(Results_DE, state = 'readonly', textvariable = MSV_DE).grid(row = 7, column = 1)
+
+
+Vdic_DE = tkinter.StringVar()
+
+Verdict_DE = ttk.Entry(Frame2, state = 'readonly', textvariable = Vdic_DE, width = 70).grid(row = 2, column = 0, columnspan = 3, pady = 40)
+
+
+def DEPot() :
+
+    pass
+
+
+CalButton = tkinter.Button(Frame2, text = 'Calculate', command = DEPot).grid(row = 0, column = 2, padx = 30)
 
 
 Root.mainloop()
