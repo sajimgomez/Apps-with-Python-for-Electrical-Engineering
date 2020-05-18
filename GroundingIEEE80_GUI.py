@@ -148,17 +148,17 @@ DesignData = tkinter.LabelFrame(Frame1, text = 'Design Data', padx = 20, pady = 
 
 DesignData.grid(row = 0, column = 1, padx = 5, pady = 10)
 
-ResOfCrushedRock = tkinter.Label(DesignData, text = 'Resistivity of Crushed Rock in Ohm-meter: ').grid(row = 0, column = 0)
-
-RCR = tkinter.StringVar()
-
-R_C_R = tkinter.Entry(DesignData, textvariable = RCR).grid(row = 0, column = 1)
-
-ThickOfCrushRockLayer = tkinter.Label(DesignData, text = 'Thickness Of Crushed Rock Layer in meters: ').grid(row = 1, column = 0)
+ThickOfCrushRockLayer = tkinter.Label(DesignData, text = 'Thickness Of Crushed Rock Layer in meters: ').grid(row = 0, column = 0)
 
 TCRL = tkinter.StringVar()
 
-T_C_R_L = tkinter.Entry(DesignData, textvariable = TCRL).grid(row = 1, column = 1)
+T_C_R_L = tkinter.Entry(DesignData, textvariable = TCRL).grid(row = 0, column = 1)
+
+ResOfCrushedRock = tkinter.Label(DesignData, text = 'Resistivity of Crushed Rock in Ohm-meter: ').grid(row = 1, column = 0)
+
+RCR = tkinter.StringVar()
+
+R_C_R = tkinter.Entry(DesignData, textvariable = RCR).grid(row = 1, column = 1)
 
 MeBurDep = tkinter.Label(DesignData, text = 'Mesh Burial Depth in meters: ').grid(row = 2, column = 0)
 
@@ -260,11 +260,10 @@ Verdict = ttk.Entry(Frame1, state = 'readonly', textvariable = Vdic, width = 70)
 
 def IEEE80() :
 
+
     if float(NOR.get()) == 0 :
 
         LOR.set('0')
-
-        L_O_R = tkinter.Entry(DesignData, textvariable = LOR, state = 'readonly').grid(row = 7, column = 1)
 
 
 
@@ -301,11 +300,20 @@ def IEEE80() :
         A_KCM = 133.1 
 
 
-
-
     # Allowable Touch and step tension criteria
 
-    Cs = 1 - ((0.09 * (1 - (float(GR.get()) / float(RCR.get())))) / (2 * float(TCRL.get()) + 0.09)) # corrective factor to compute the effective foot resistance in the presence of a finite thickness of surface material
+
+    if float(TCRL.get()) == 0 :
+
+        Cs = 1
+
+        RCR.set(GR.get())
+
+
+    else :
+        
+        Cs = 1 - ((0.09 * (1 - (float(GR.get()) / float(RCR.get())))) / (2 * float(TCRL.get()) + 0.09)) # corrective factor to compute the effective foot resistance in the presence of a finite thickness of surface material
+
 
     Es_50Kg = (1000 + 6 * Cs * float(RCR.get())) * (0.116 / (float(MFCT.get()) ** 0.5)) # Allowable step voltage for a 50 Kg person
 
@@ -403,10 +411,7 @@ def IEEE80() :
     else : 
 
 
-        Vdic.set('Modify Design to meet standard')    
-
-
-    L_O_R = tkinter.Entry(DesignData, textvariable = LOR).grid(row = 7, column = 1)   
+        Vdic.set('Modify Design to meet standard')   
 
 
 
@@ -487,17 +492,17 @@ DesignData_DE = tkinter.LabelFrame(Frame2, text = 'Design Data', padx = 20, pady
 
 DesignData_DE.grid(row = 1, column = 0, padx = 30, pady = 40)
 
-ResOfCrushedRock_DE = tkinter.Label(DesignData_DE, text = 'Resistivity of Crushed Rock in Ohm-meter: ').grid(row = 0, column = 0)
-
-RCR_DE = tkinter.StringVar()
-
-R_C_R_DE = tkinter.Entry(DesignData_DE, textvariable = RCR_DE).grid(row = 0, column = 1)
-
-ThickOfCrushRockLayer_DE = tkinter.Label(DesignData_DE, text = 'Thickness Of Crushed Rock Layer in meters: ').grid(row = 1, column = 0)
+ThickOfCrushRockLayer_DE = tkinter.Label(DesignData_DE, text = 'Thickness Of Crushed Rock Layer in meters: ').grid(row = 0, column = 0)
 
 TCRL_DE = tkinter.StringVar()
 
-T_C_R_L_DE = tkinter.Entry(DesignData_DE, textvariable = TCRL_DE).grid(row = 1, column = 1)
+T_C_R_L_DE = tkinter.Entry(DesignData_DE, textvariable = TCRL_DE).grid(row = 0, column = 1)
+
+ResOfCrushedRock_DE = tkinter.Label(DesignData_DE, text = 'Resistivity of Crushed Rock in Ohm-meter: ').grid(row = 1, column = 0)
+
+RCR_DE = tkinter.StringVar()
+
+R_C_R_DE = tkinter.Entry(DesignData_DE, textvariable = RCR_DE).grid(row = 1, column = 1)
 
 MeBurDep_DE = tkinter.Label(DesignData_DE, text = 'Electrode Burial Depth in meters: ').grid(row = 2, column = 0)
 
@@ -616,7 +621,18 @@ def DEPot() :
 
     # Allowable Touch and step tension criteria
 
-    Cs = 1 - ((0.09 * (1 - (float(GR_DE.get()) / float(RCR_DE.get())))) / (2 * float(TCRL_DE.get()) + 0.09)) # corrective factor to compute the effective foot resistance in the presence of a finite thickness of surface material
+
+    if float(TCRL_DE.get()) == 0 :
+
+        Cs = 1
+
+        RCR_DE.set(GR_DE.get())
+
+
+    else :
+        
+        Cs = 1 - ((0.09 * (1 - (float(GR_DE.get()) / float(RCR_DE.get())))) / (2 * float(TCRL_DE.get()) + 0.09)) # corrective factor to compute the effective foot resistance in the presence of a finite thickness of surface material
+
 
     Es_50Kg = (1000 + 6 * Cs * float(RCR_DE.get())) * (0.116 / (float(MFCT_DE.get()) ** 0.5)) # Allowable step voltage for a 50 Kg person
 
